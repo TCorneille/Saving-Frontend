@@ -1,73 +1,116 @@
-# React + TypeScript + Vite
+Saving Frontend (React + Vite + Redux Toolkit)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The Saving Frontend is a web application built with React, Vite, and Redux Toolkit that provides both Admin Management and Customer (Client) features for a digital savings system.
 
-Currently, two official plugins are available:
+It allows admins to manage customers, balances, and devices, and enables customers to perform deposits, withdrawals, and view their transaction history.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🧩 Tech Stack
+Layer	Technology
+Framework	React 18 + Vite
+Language	TypeScript
+State Management	Redux Toolkit + React Redux
+Styling	Tailwind CSS
+Routing	React Router DOM
+API Communication	RTK Query
 
-## React Compiler
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+🗂️ Folder Structure
+SAVING-FRONTEND/
+├── public/
+│   └── favicon.ico
+│
+├── src/
+│   ├── app/               # Redux store setup and slices
+│   ├── assets/            # Images and static resources
+│   ├── Components/        # Shared reusable UI components (modals, cards, inputs)
+│   ├── pages/             # Page-level components (Login, Dashboard, etc.)
+│   ├── Routes/            # Route definitions & protected routes
+│   ├── App.tsx            # Root application component
+│   ├── main.tsx           # Entry point (React DOM rendering)
+│   ├── App.css
+│   └── index.css
+│
+├── .env                   # Environment variables
+├── package.json
+├── tsconfig.json
+├── vite.config.js
+└── README.md
 
-## Expanding the ESLint configuration
+🚀 Features
+🧭 Admin Management Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Authentication – Secure admin login using JWT.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Manage Customers – View, edit, and manage registered customers.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Device Verification – Validate or approve device IDs used by customers.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Balance & Transaction Management – View all balances and transaction history.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Statistics Dashboard (optional) – Display charts and metrics such as:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Total customers
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Total deposits
+
+Total withdrawals
+
+Activity trends over time
+
+👤 Client Features
+
+Customer Registration & Login – Secure signup and login flow.
+
+Dashboard – Display balance and transaction history.
+
+Deposit / Withdraw Forms – Add or withdraw funds with instant feedback.
+
+Low Balance Alerts – Notifications when balance falls below threshold.
+
+Push Notifications (if mobile) –
+
+Deposit confirmation
+
+Withdrawal alerts
+
+Low balance warnings
+
+Device verification and successful login
+
+
+⚙️ Setup and Installation
+1️⃣ Clone the Repository
+git clone https://github.com/TCorneille /saving-frontend.git
+cd saving-frontend
+
+Install Dependencies
+npm install
+
+
+
+
+
+Run Development Server
+npm run dev
+
+
+
+
+
+
+🧰 Available Scripts
+Command	Description
+npm run dev	Start development server
+npm run build	Build for production
+
+🧪 Example Admin Credentials (for testing)
+Email: corneille@example.com  
+Password: password123
+
+
+
+
+
+🧑‍💻 Author
+
+Emmanuel Tumwizere
