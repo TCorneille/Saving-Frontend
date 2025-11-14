@@ -1,8 +1,72 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "../Components/Input";
 import Button from "../Components/Button";
+import { useLoginUserMutation } from "../app/api/Users";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [loginUser, { isLoading, isError, error }] = useLoginUserMutation();
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.email || !formData.password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+
+    try {
+      // Call login mutation
+      const response = await loginUser(formData).unwrap();
+
+      console.log("✅ Login successful:", response);
+
+      // --- Extract role safely ---
+      // Covers various API shapes (e.g., response.user.role OR response.data.user.role OR response.role)
+      const role =
+        response?.user?.role ||
+        response?.data?.user?.role ||
+        response?.role ||
+        "client"; // default if not found
+
+      console.log("🎭 Detected role:", role);
+
+      // --- Store token and user info ---
+      const token =
+        response?.token ||
+        response?.accessToken ||
+        response?.data?.token;
+
+      const user =
+        response?.user ||
+        response?.data?.user ||
+        response?.data;
+
+      if (token) localStorage.setItem("token", token);
+      if (user) localStorage.setItem("user", JSON.stringify(user));
+
+      // --- Redirect by role ---
+      if (role.toLowerCase() === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/client");
+      }
+
+    } catch (err) {
+      console.error("❌ Login failed:", err);
+    }
+  };
+
   return (
     <div className="flex justify-center min-h-dvh bg-primaryColor-50">
       <div className="min-sm:w-[450px] max-sm:w-full bg-white mt-20 mb-20 flex justify-center items-center rounded-lg shadow-md">
@@ -11,12 +75,15 @@ const Login = () => {
             Saving APP
           </span>
 
-          <form className="flex flex-col gap-3 w-full">
+          {/* --- Login Form --- */}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full">
             <Input
               label="Email"
               type="email"
               name="email"
               placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
             />
 
             <Input
@@ -24,22 +91,35 @@ const Login = () => {
               type="password"
               name="password"
               placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleChange}
             />
 
-            <Button label="Log in" type="submit" className="w-full" />
+            <Button
+              label={isLoading ? "Logging in..." : "Log in"}
+              type="submit"
+              className="w-full"
+              disabled={isLoading}
+            />
 
-            {/* Forgot Password */}
-            <div className="text-right mt-2">
-              <button
-                // to="/forgot-password"
-                className="text-sm text-primaryColor-700 hover:underline"
-              >
-                Forgot password?
-              </button>
-            </div>
+            {isError && (
+              <p className="text-red-600 text-sm mt-2">
+                {error?.data?.message || "Invalid email or password"}
+              </p>
+            )}
           </form>
 
-          {/* Register Link */}
+          {/* --- Forgot Password --- */}
+          <div className="text-right mt-2 w-full">
+            <button
+              type="button"
+              className="text-sm text-primaryColor-700 hover:underline"
+            >
+              Forgot password?
+            </button>
+          </div>
+
+          {/* --- Register Link --- */}
           <div className="text-sm text-gray-600 mt-3">
             Don’t have an account?{" "}
             <Link
