@@ -3,7 +3,6 @@ import React from 'react';
 import { BsGraphUpArrow } from 'react-icons/bs';
 import { FaDollarSign, FaUsers } from 'react-icons/fa';
 import { LuSmartphone } from 'react-icons/lu';
-import { MdOutlinePendingActions, MdOutlineBusiness } from "react-icons/md";
 interface AdminStatsProps {
     totalCustomers: number;
     activeDevices: number;

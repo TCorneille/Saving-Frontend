@@ -1,6 +1,5 @@
 import React from "react";
 import { FaAngleDown, FaSearch } from "react-icons/fa";
-import { FaD, FaS } from "react-icons/fa6";
 
 // Type for dropdowns
 interface DropdownOption {

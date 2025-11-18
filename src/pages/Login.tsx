@@ -3,9 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import Input from "../Components/Input";
 import Button from "../Components/Button";
 import { useLoginUserMutation } from "../app/api/Users";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 const Login = () => {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -13,11 +15,21 @@ const Login = () => {
 
   const [loginUser, { isLoading, isError, error }] = useLoginUserMutation();
 
-  const handleChange = (e) => {
+  // ----------------------------
+  // FIXED: Strongly typed input event
+  // ----------------------------
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e) => {
+  // ----------------------------
+  // FIXED: Strongly typed form event
+  // ----------------------------
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
@@ -26,22 +38,15 @@ const Login = () => {
     }
 
     try {
-      // Call login mutation
       const response = await loginUser(formData).unwrap();
-
       console.log("✅ Login successful:", response);
 
-      // --- Extract role safely ---
-      // Covers various API shapes (e.g., response.user.role OR response.data.user.role OR response.role)
       const role =
         response?.user?.role ||
         response?.data?.user?.role ||
         response?.role ||
-        "client"; // default if not found
+        "client";
 
-      console.log("🎭 Detected role:", role);
-
-      // --- Store token and user info ---
       const token =
         response?.token ||
         response?.accessToken ||
@@ -55,16 +60,36 @@ const Login = () => {
       if (token) localStorage.setItem("token", token);
       if (user) localStorage.setItem("user", JSON.stringify(user));
 
-      // --- Redirect by role ---
       if (role.toLowerCase() === "admin") {
         navigate("/admin");
       } else {
         navigate("/client");
       }
-
     } catch (err) {
       console.error("❌ Login failed:", err);
     }
+  };
+
+  // ----------------------------
+  // TYPE GUARD (Fixes TS2339)
+  // ----------------------------
+  const getErrorMessage = () => {
+    if (!error) return null;
+
+    // If error is FetchBaseQueryError and contains data
+    if (
+      typeof error === "object" &&
+      "data" in error
+    ) {
+      const baseError = error as FetchBaseQueryError & {
+        data?: { message?: string };
+      };
+
+      return baseError.data?.message || "Invalid email or password";
+    }
+
+    // Fallback for SerializedError
+    return "Something went wrong. Please try again.";
   };
 
   return (
@@ -103,9 +128,7 @@ const Login = () => {
             />
 
             {isError && (
-              <p className="text-red-600 text-sm mt-2">
-                {error?.data?.message || "Invalid email or password"}
-              </p>
+              <p className="text-red-600 text-sm mt-2">{getErrorMessage()}</p>
             )}
           </form>
 
