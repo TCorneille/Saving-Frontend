@@ -7,18 +7,27 @@ import Device from "../pages/Devices";
 import Transaction from "../pages/Transactions";
 import Login from "../pages/Login";
 import ClientDashboard from "../pages/ClientDashboard";
-  import RegistrationForm from "../pages/RegistrationForm";
+import RegistrationForm from "../pages/RegistrationForm";
 
 const AppRoute: React.FC = () => {
   return (
     <Routes>
       {/* Public Route */}
       <Route path="/" element={<Login />} />
-      <Route path="/register" element={<RegistrationForm/>} />
+      <Route
+        path="/register"
+        element={
+          <RegistrationForm
+            onSuccess={() => console.log("Registration completed")}
+            onCancel={() => console.log("Registration canceled")}
+          />
+        }
+      />
+
 
       {/* Admin Routes */}
       <Route path="/admin" element={<AdminDashboard />}>
-        <Route path="dashboard" element={<AdminHome />} />
+        <Route index element={<AdminHome />} />
         <Route path="customers" element={<Customer />} />
         <Route path="devices" element={<Device />} />
         <Route path="transactions" element={<Transaction />} />

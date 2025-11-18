@@ -1,7 +1,6 @@
 import React from "react";
-import { FaDice } from "react-icons/fa";
 import { FaDiceD6 } from "react-icons/fa6";
-import { FiBell, FiUser, FiMenu } from "react-icons/fi";
+import { FiBell,  FiMenu } from "react-icons/fi";
 import { LuLogOut } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
@@ -43,7 +42,7 @@ const HeaderClient: React.FC<HeaderProps> = ({ onMenuClick }) => {
                         4
                     </span>
                 </Link>
-                <Link to="">
+                <Link to="/">
                     <LuLogOut size={22} className="text-gray-700" />
                 </Link>
 

@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Link, useLocation } from "react-router-dom";
 import { FaDiceD6, FaUserFriends } from "react-icons/fa";
 import { MdComputer } from "react-icons/md";
@@ -9,7 +9,7 @@ export default function AdminSidebar() {
   const location = useLocation();
 
   const navLinks = [
-    { name: "Dashboard", icon: <MdComputer size={22} />, path: "Dashboard" },
+    { name: "Dashboard", icon: <MdComputer size={22} />, path: "" },
     { name: "Customers", icon: <FaUserFriends size={22} />, path: "Customers" },
     { name: "Devices", icon: <LuSmartphone size={22} />, path: "devices" },
     { name: "Transactions", icon: <LuBadgeDollarSign size={22} />, path: "transactions" },

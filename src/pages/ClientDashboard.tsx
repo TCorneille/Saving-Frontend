@@ -1,4 +1,4 @@
-import { FaDollarSign } from "react-icons/fa";
+
 import AlertCard from "../Components/Client/Alert";
 import HeaderClient from "../Components/Client/HeaderClient";
 import BalanceCard from "../Components/Client/Balance";

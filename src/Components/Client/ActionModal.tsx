@@ -1,113 +1,68 @@
 import React, { useState } from "react";
-import Input from "../Input"; // assuming this is your custom input component
+import {
+  useDepositMutation,
+  useWithdrawMutation,
+} from "../../app/api/account";
 
-interface ActionModalProps {
-  onClose: () => void;
+interface ModalProps {
   type: "Deposit" | "Withdraw";
+  onClose: () => void;
 }
 
-const ActionModal: React.FC<ActionModalProps> = ({ onClose, type }) => {
-  const [formData, setFormData] = useState({
-    amount: "",
-    description: "",
-  });
+const ActionModal: React.FC<ModalProps> = ({ type, onClose }) => {
+  const [amount, setAmount] = useState("");
+  const [deposit, { isLoading: depositing }] = useDepositMutation();
+  const [withdraw, { isLoading: withdrawing }] = useWithdrawMutation();
 
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [success, setSuccess] = useState(false);
+  const loading = depositing || withdrawing;
 
-  // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  const handleSubmit = async () => {
+    if (!amount || Number(amount) <= 0) return alert("Enter a valid amount");
 
-  // Simple validation
-  const validate = () => {
-    const newErrors: { [key: string]: string } = {};
-    if (!formData.amount) newErrors.amount = "Amount is required";
-    if (!formData.description) newErrors.description = "Description is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    try {
+      if (type === "Deposit") {
+        await deposit({ amount: Number(amount) }).unwrap();
+      } else {
+        await withdraw({ amount: Number(amount) }).unwrap();
+      }
 
-  // Handle submit
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-    setSuccess(true);
-    setTimeout(() => {
-      setSuccess(false);
-      onClose();
-    }, 1200);
+      onClose(); 
+    } catch (err) {
+      console.error(err);
+      alert("Transaction failed!");
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-700/70 flex items-center justify-center z-[1000]">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
-        <h2 className="text-xl font-semibold text-gray-700 mb-4">
-          {type === "Deposit" ? "Make a Deposit" : "Make a Withdrawal"}
-        </h2>
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center">
+      <div className="bg-white p-6 rounded-xl w-full max-w-sm shadow-lg">
+        <h2 className="text-xl font-semibold mb-4">{type}</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Amount
-            </label>
-            <input
-              type="number"
-              name="amount"
-              value={formData.amount}
-              onChange={handleChange}
-              placeholder="Enter amount"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primaryColor-500 focus:outline-none"
-            />
-            {errors.amount && <p className="text-red-500 text-xs">{errors.amount}</p>}
-          </div>
+        <input
+          type="number"
+          className="w-full border p-2 rounded mb-4 outline-none"
+          placeholder="Enter amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Description
-            </label>
-            <input
-              type="text"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Enter description"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-primaryColor-500 focus:outline-none"
-            />
-            {errors.description && (
-              <p className="text-red-500 text-xs">{errors.description}</p>
-            )}
-          </div>
+        <div className="flex justify-end gap-3">
+          <button
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            onClick={onClose}
+            disabled={loading}
+          >
+            Cancel
+          </button>
 
-          <div className="flex justify-end gap-2 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className={`px-4 py-2 rounded-lg text-white ${
-                type === "Deposit" ? "bg-primaryColor-500 hover:bg-primaryColor-700" : "bg-success-500 hover:bg-success-700"
-              } transition`}
-            >
-              {type}
-            </button>
-          </div>
-        </form>
-
-        {success && (
-          <p className="text-green-600 text-sm mt-3 text-center">
-            {type} successful!
-          </p>
-        )}
+          <button
+            className="px-4 py-2 bg-primaryColor-500 text-white rounded hover:bg-primaryColor-700"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            {loading ? "Processing..." : type}
+          </button>
+        </div>
       </div>
     </div>
   );
